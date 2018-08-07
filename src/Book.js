@@ -1,8 +1,13 @@
 import React from 'react'
+import ReactStars from 'react-stars'
 
+const ratingChanged = (newRating) => {
+  
+}
 class Book extends React.Component {
   state = {
     shelf: 'none'
+
   }
 
   componentDidMount() {
@@ -46,6 +51,11 @@ class Book extends React.Component {
         <div className="book-authors">
           {this.props.book.authors ? this.props.book.authors.toString() : ' '}</div>
       </div>
+      <ReactStars
+        count={5}
+        onChange={ratingChanged}
+        size={24}
+        color2={'#ffd700'} />
     </li>)
 }
 }

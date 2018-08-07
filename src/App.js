@@ -5,6 +5,8 @@ import BookList from "./BookList";
 import {Route, Link} from 'react-router-dom'
 import Book from './Book'
 
+
+
 class BooksApp extends Component {
   state = {
      books: [],
@@ -48,7 +50,7 @@ class BooksApp extends Component {
       BooksAPI.search(query).then(response => {
         if (response.length) {
           showingBooks = response.map(book => {
-            const index = this.state.books.findIndex(c => c.id === book.id)
+            const index = this.state.books.findIndex(q => q.id === book.id)
             if( index >= 0 ) {
               return this.state.books[index]
             } else {
@@ -85,6 +87,7 @@ class BooksApp extends Component {
               {this.state.showingBooks.map((book, i) => (
                 <Book key={i} book={book}
                          onUpdateBook={(book, shelf) => this.updateShelf(book, shelf)}/>
+
                  ))}
                 </ol>
 
