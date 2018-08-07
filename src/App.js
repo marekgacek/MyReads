@@ -1,15 +1,38 @@
-import React from 'react'
+import React, {Component} from 'react'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
 import BookList from "./BookList";
 import {Route, Link} from 'react-router-dom'
+import Book from './Book'
 
-class BooksApp extends React.Component {
+class BooksApp extends Component {
   state = {
      books: [],
      query: '',
      showingBooks: []
    }
+   updateShelf = (book, shelf) => {
+       let books;
+       if (this.state.books.findIndex(b => b.id === book.id) > 0) {
+         // change the position of an existing book in the shelf
+         books = this.state.books.map(b => {
+           if (b.id === book.id) {
+             return {...book, shelf}
+           } else {
+             return b
+           }
+         })
+       } else {
+         // add a new book to the shelf
+         books = [...this.state.books, {...book, shelf}]
+       }
+
+       this.setState({books})
+
+       BooksAPI.update(book, shelf).then((data) => {
+         // shelf updated on the server
+       })
+     }
 
    // get all the books before loading the component
      componentDidMount() {
@@ -49,14 +72,6 @@ class BooksApp extends React.Component {
             <div className="search-books-bar">
               <Link className="close-search" to="/">Close</Link>
               <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
                 <input type="text"
                 placeholder="Search by title or author"
                 value={query}
@@ -68,38 +83,17 @@ class BooksApp extends React.Component {
             <div className="search-books-results">
               <ol className="books-grid">
               {this.state.showingBooks.map((book, i) => (
-                    <li key={i}>
-                      <div className="book">
-                        <div className="book-top">
-                          <div className="book-cover" style={{
-                            width: 128,
-                            height: 192,
-                            backgroundImage: book.imageLinks ?
-                              `url(${book.imageLinks.thumbnail})` : ''
-                          }}></div>
-                          <div className="book-shelf-changer">
-                            <select onChange={this.changeBookShelf} value={this.state.shelf}>
-                              <option value="move" disabled>Move to...</option>
-                              <option value="currentlyReading">Currently Reading
-                              </option>
-                              <option value="wantToRead">Want to Read</option>
-                              <option value="read">Read</option>
-                              <option value="none">None</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className="book-title">{book.title}</div>
-                        <div className="book-authors">{book.authors ? book.authors.toString() : ' '}</div>
-                      </div>
-                    </li>
-                  ))}
+                <Book key={i} book={book}
+                         onUpdateBook={(book, shelf) => this.updateShelf(book, shelf)}/>
+                 ))}
                 </ol>
 
             </div>
           </div>
         )} />
            <Route exact path="/" render={() => (
-             <BookList/>
+             <BookList books={this.state.books}
+                       onUpdateShelf={(book, shelf) => this.updateShelf(book, shelf)}/>
            )}/>
 
      </div>
