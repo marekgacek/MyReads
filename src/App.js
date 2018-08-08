@@ -93,7 +93,7 @@ class BooksApp extends Component {
           render={() => (
             <div className="search-books">
               <div className="search-books-bar">
-                <Link className="close-search" to="/">
+                <Link className="close-search" to="/" onClick={this.setState}>
                   {" "}
                   Close{" "}
                 </Link>{" "}
