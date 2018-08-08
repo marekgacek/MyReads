@@ -9,6 +9,7 @@ class Book extends React.Component {
 
   componentDidMount() {
     const { book } = this.props;
+
     if (book.shelf) {
       this.setState({
         shelf: book.shelf

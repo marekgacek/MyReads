@@ -4,6 +4,8 @@ import "./App.css";
 import BookList from "./BookList";
 import { Route, Link } from "react-router-dom";
 import Book from "./Book";
+import { Switch } from 'react-router'
+import NoMatch from './NoMatch'
 
 class BooksApp extends Component {
   state = {
@@ -13,7 +15,7 @@ class BooksApp extends Component {
   };
   updateShelf = (book, shelf) => {
     let books;
-    if (this.state.books.findIndex(b => b.id === book.id) > 0) {
+    if (this.state.books.findIndex(b => b.id === book.id) >= 0) {
       // change the position of an existing book in the shelf
       books = this.state.books.map(b => {
         if (b.id === book.id) {
@@ -85,9 +87,9 @@ class BooksApp extends Component {
     const { query } = this.state;
     return (
       <div className="app">
+      <Switch>
         <Route
-          exact
-          path="/search"
+          exact path="/search"
           render={() => (
             <div className="search-books">
               <div className="search-books-bar">
@@ -107,9 +109,9 @@ class BooksApp extends Component {
               <div className="search-books-results">
                 <ol className="books-grid">
                   {" "}
-                  {this.state.showingBooks.map((book, i) => (
+                  {this.state.showingBooks.map((book, key) => (
                     <Book
-                      key={i}
+                      key={book.id}
                       book={book}
                       onUpdateBook={(book, shelf) =>
                         this.updateShelf(book, shelf)
@@ -122,8 +124,7 @@ class BooksApp extends Component {
           )}
         />{" "}
         <Route
-          exact
-          path="/"
+          exact path="/"
           render={() => (
             <BookList
               books={this.state.books}
@@ -131,6 +132,8 @@ class BooksApp extends Component {
             />
           )}
         />
+        <Route component={NoMatch}/>
+      </Switch>
       </div>
     );
   }
